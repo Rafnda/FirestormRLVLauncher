@@ -1,0 +1,36 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:FirestormRLVLauncher"
+        x:Class="FirestormRLVLauncher.LoginDetailsWindow"
+        x:DataType="local:LoginDetailsWindow"
+        Title="Profile Details"
+        Width="420" Height="280">
+    <Panel>
+        <StackPanel Margin="12" Spacing="8">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="File: "/>
+                <TextBlock Name="ProfileFileText" Text="New File" Grid.ColumnSpan="2"/>
+            </StackPanel>
+            <Grid ColumnDefinitions="120, *" RowDefinitions="*,*,*,*" Margin="12" RowSpacing="4">
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Username" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Name="UsernameText"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Password" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Name="PasswordBox" PasswordChar="*"/>
+
+                <CheckBox Name="HidePasswordBox" Grid.Row="2" Grid.Column="1" 
+                          Content="Hide password" IsChecked="{Binding HidePassword, Mode=TwoWay}"/>
+        
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Duration [hours]" VerticalAlignment="Center"/>
+                <NumericUpDown Grid.Row="3" Grid.Column="1" Name="DurationNum" Value="50" Increment="10"
+                        FormatString="0" Minimum="1"/>
+            </Grid>
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="12" Spacing="8">
+            <Button Name="SaveButton" Click="SaveButton_Click" Content="Save" Width="80"/>
+            <Button Name="CancelButton" Click="CancelButton_Click" Content="Cancel" Width="80"/>
+        </StackPanel>
+    </Panel>
+</Window>
