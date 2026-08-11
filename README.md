@@ -4,6 +4,9 @@ Launch and automatically log in to Firestorm with RLV enabled. The password will
 
 **Warning**: Use at your own risk. Especially because this is a new tool, potentially with bugs. Make sure it works with your environment first and ALWAYS have a second place to store your password.
 
+<img width="602" height="432" alt="screen" src="https://github.com/user-attachments/assets/4f5a5fe2-f902-424a-82e5-f04a80179737" />
+
+
 **Usage**
 * (Change the password of your account and associated eMail to the same long/complicated password and keep it in a text editor until done)
 * (Save the password to https://app.thetimecapsule.org to set a release date)
