@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Xml;
+using System.Drawing;
 
 namespace FirestormRLVLauncher {
     public class ObfuscatedInt {
@@ -79,6 +80,7 @@ namespace FirestormRLVLauncher {
         public ObfuscatedByteArray _exeHash;
         public ObfuscatedInt _locked;
         private ObfuscatedByteArray _key;
+        public Action<string, Color>? _onLoadError;
         public string GetPassword() {
             return Decrypt(_encryptedPassword);
         }
@@ -179,7 +181,8 @@ namespace FirestormRLVLauncher {
                     }
                 }
             }
-            catch (Exception) {
+            catch (Exception ex) {
+                _onLoadError?.Invoke("Failed to load login: " + ex.Message + "\nWrong file type or the encryption key changed.", Color.DarkRed);
             }
         }
 

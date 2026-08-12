@@ -115,15 +115,21 @@ namespace FirestormRLVLauncher
 
         public void LoadLogin(string filePath) {
             try {
-                LoginData loginData = new LoginData(filePath);
+                LoginData loginData = new LoginData(filePath) 
+                { 
+                    _onLoadError = AppendStatus 
+                };
                 _loginData = loginData;
                 Settings._lastLoginFile = filePath;
                 Settings.SaveSettings();
-                AppendStatus("Loaded login from " + Path.GetFileName(filePath));
+                if (loginData._userName == string.Empty)
+                    AppendStatus(Path.GetFileName(filePath) + " incomplete\n  This probably means the encryption key changed.", System.Drawing.Color.DarkRed);
+                else
+                    AppendStatus("Loaded login from " + Path.GetFileName(filePath));
             }
             catch (Exception ex) {
                 _loginData = null;
-                AppendStatus("Failed to load login: " + ex.Message + "\nWrong file type or the encryption key changed.", System.Drawing.Color.DarkRed);
+                AppendStatus("Failed to load login: " + ex.Message + "\n  Wrong file type or the encryption key changed.", System.Drawing.Color.DarkRed);
             }
             ShowLoginData();
         }
@@ -258,6 +264,8 @@ namespace FirestormRLVLauncher
             this.TimeText.Text += elapsedHours.ToString("F1") + " / " + (_loginData._totalMinutes.Value / 60).ToString() + " hours";
         }
 
+
+
         private async void LaunchButton_Click(object? sender, RoutedEventArgs e)
         {
             Button? launchButton = this.FindControl<Button>("LaunchButton");
@@ -270,21 +278,20 @@ namespace FirestormRLVLauncher
             if (!ModifyFirestormSettings())
                 goto Fail;
 
-            Process? proc = await LaunchProc();
-            if (proc == null)
+            Process? process = await LaunchProc();
+            if (process == null)
                 goto Fail;
 
             await Task.Delay(1000);
-            IntPtr? wnd = GetProcessWindow(proc);
+            IntPtr? wnd = await WaitForLoadedWindow(process);
             if (wnd == null)
                 goto Fail;
-            await WaitForLoadedWindow(wnd.Value);
 
-            bool success = await Login(proc);
+            bool success = await Login(wnd.Value);
             if (!success)
                 goto Fail;
 
-            _ = MonitorProcessAsync(proc);
+            _ = MonitorProcessAsync(process);
             AppendStatus("Keep this application running to have the time count.");
             return;
 
@@ -556,7 +563,7 @@ namespace FirestormRLVLauncher
             List<IntPtr> windows = new List<IntPtr>();
             List<int> widths = new List<int>();
             List<int> colors = new List<int>();
-            int maxWidth = 100;
+            int maxColorCount = 0;
 
             EnumWindows(delegate (IntPtr wnd, IntPtr param)
             {
@@ -565,66 +572,68 @@ namespace FirestormRLVLauncher
                 if (wndProcessId == process.Id) {
                     RECT rc;
                     GetWindowRect(wnd, out rc);
-                    if (rc.Width >= maxWidth) {
-                        maxWidth = rc.Width;
+                    if (rc.Width >= 100) {
                         int colorCount = WindowColors(wnd);
-                        AppendStatus("Window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount);
-                        windows.Add(wnd);
-                        widths.Add(rc.Width);
-                        colors.Add(colorCount);
+                        if (colorCount > maxColorCount) {
+                            AppendStatus("Window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount);
+                            maxColorCount = colorCount;
+                            windows.Add(wnd);
+                            widths.Add(rc.Width);
+                            colors.Add(colorCount);
+                        }
+                        else
+                            AppendStatus("Other window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount);
                     }
-                    else if (rc.Width > 100)
-                        AppendStatus("Other window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width);
                 }
                 return true; //return true here so that we iterate all windows
             }, IntPtr.Zero);
 
-            if (windows.Count > 0) {
-                int returnIndex = 0;
-                int maxColors = 0;
-                for (int i = 0; i < windows.Count; i++) {
-                    if (widths[i] == maxWidth && colors[i] > maxColors) {
-                        returnIndex = i;
-                        maxColors = colors[i];
-                    }
-                }
-
-                return windows[returnIndex];
-            }
+            if (windows.Count > 0)
+                return windows[windows.Count - 1];
             return null;
         }
 
 
 
-        public async Task<bool> WaitForLoadedWindow(IntPtr hwnd) {
+        public async Task<IntPtr?> WaitForLoadedWindow(Process process) {
+            IntPtr? hwnd = GetProcessWindow(process);
+            if (hwnd == null)
+                return null;
+
             int waitTime = 0;
             int previousDifferentColors = 0;
             int unchanged = 0;
-            while (waitTime < 20000) {
-                try {
-                    int differentColors = WindowColors(hwnd);
-                    if (differentColors != previousDifferentColors) {
-                        AppendStatus("Different colors: " + differentColors.ToString() + " at " + waitTime.ToString() + "ms");
-                        previousDifferentColors = differentColors;
-                        unchanged = 0;
-                    }
-                    else {
-                        unchanged++;
-                        if (differentColors > 50 && unchanged > 5) {
-                            AppendStatus("Window appears to be loaded after " + waitTime.ToString() + "ms");
-                            break;
-                        }
-                    }
-                    //bmp.Save("window_capture_" + waitTime.ToString() + ".png", ImageFormat.Png);
+            int errors = 0;
+            while (waitTime < 20000 && errors < 5) {
+                int differentColors = WindowColors(hwnd.Value);
+                if (differentColors == 0) {
+                    AppendStatus("Window appears to be closed after " + waitTime.ToString() + "ms");
+                    hwnd = GetProcessWindow(process);
+                    errors++;
                 }
-                catch (Exception) {
-                    AppendStatus("Failed to capture screen", Color.DarkRed);
+                else if (differentColors < 10 && waitTime > 2000) {
+                    AppendStatus("Window empty after " + waitTime.ToString() + "ms");
+                    hwnd = GetProcessWindow(process);
+                    errors++;
                 }
-                //break;
+                else if (differentColors != previousDifferentColors) {
+                    AppendStatus("Different colors: " + differentColors.ToString() + " at " + waitTime.ToString() + "ms");
+                    previousDifferentColors = differentColors;
+                    unchanged = 0;
+                }
+                else {
+                    unchanged++;
+                    if (differentColors > 50 && unchanged > 5) {
+                        AppendStatus("Window appears to be loaded after " + waitTime.ToString() + "ms");
+                        return hwnd;
+                    }
+                }
+                //bmp.Save("window_capture_" + waitTime.ToString() + ".png", ImageFormat.Png);
                 await Task.Delay(100);
                 waitTime += 100;
             }
-            return true;
+            AppendStatus("Failed to find the Firestorm window", Color.DarkRed);
+            return null;
         }
 
         public int WindowColors(IntPtr hwnd) {
@@ -672,13 +681,11 @@ namespace FirestormRLVLauncher
         [DllImport("USER32.DLL")]
         private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
-        public bool CheckForegroundWindow(Process proc) {
+        public bool CheckForegroundWindow(IntPtr targetWnd) {
             IntPtr wnd = GetForegroundWindow();
             //Check process ID
-            uint wndProcessId;
-            GetWindowThreadProcessId(wnd, out wndProcessId);
-            if (wndProcessId != proc.Id) {
-                AppendStatus("Foreground window is not correct!", Color.DarkRed);
+            if (wnd != targetWnd) {
+                AppendStatus("Foreground window is not correct - keep the Firestorm window selected while starting!", Color.DarkRed);
                 return false;
             }
 
@@ -698,24 +705,35 @@ namespace FirestormRLVLauncher
             return false;
         }
 
-        public async Task<bool> Login(Process proc) {
+
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        public async Task<bool> Login(IntPtr firestormWnd) {
+            int i = 0;
+            while (i < 5 && GetForegroundWindow() != firestormWnd) {
+                AppendStatus("Waiting for Firestorm window to be in foreground...");
+                SetForegroundWindow(firestormWnd);
+                await Task.Delay(300);
+                i++;
+            }
             if (!CheckFirestormSettings())
                 return false;
             if (_loginData == null)
-                return false;
-            if (!CheckForegroundWindow(proc))
                 return false;
             if (Clipboard == null) {
                 AppendStatus("Clipboard is not available.", Color.DarkRed);
                 return false;
             }
+            if (!CheckForegroundWindow(firestormWnd))
+                return false;
             Robot robot = new Robot();
             await Clipboard.SetTextAsync(_loginData._userName);
             await Task.Delay(10); //test to see if it fixes empty name
             robot.CombineKeys(Key.Control, Key.V);
             await Task.Delay(70);
             robot.KeyPress(Key.Tab);
-            if (!CheckForegroundWindow(proc))
+            if (!CheckForegroundWindow(firestormWnd))
                 return false;
             await Clipboard.SetTextAsync(_loginData.GetPassword());
             robot.CombineKeys(Key.Control, Key.V);

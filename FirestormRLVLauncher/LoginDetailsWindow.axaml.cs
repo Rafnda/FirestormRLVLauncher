@@ -83,6 +83,9 @@ namespace FirestormRLVLauncher
             int hours = (int)(durationNum?.Value ?? 50);
             int totalMinutes = Math.Max(1, hours) * 60;
 
+            if (username == null || username.Length == 0)
+                return;
+
             if (_login == null) {
 
                 // ask user where to save the profile
