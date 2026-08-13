@@ -723,24 +723,16 @@ namespace FirestormRLVLauncher
                 return false;
             if (_loginData == null)
                 return false;
-            if (Clipboard == null) {
-                AppendStatus("Clipboard is not available.", Color.DarkRed);
-                return false;
-            }
             if (!CheckForegroundWindow(firestormWnd))
                 return false;
             Robot robot = new Robot();
-            await Clipboard.SetTextAsync(_loginData._userName);
-            await Task.Delay(10); //test to see if it fixes empty name
-            robot.CombineKeys(Key.Control, Key.V);
-            await Task.Delay(70);
+            robot.Type(_loginData._userName);
+            await Task.Delay(60);
             robot.KeyPress(Key.Tab);
             if (!CheckForegroundWindow(firestormWnd))
                 return false;
-            await Clipboard.SetTextAsync(_loginData.GetPassword());
-            robot.CombineKeys(Key.Control, Key.V);
+            robot.Type(_loginData.GetPassword());
             await Task.Delay(60);
-            await Clipboard.ClearAsync();
             robot.KeyPress(Key.Enter);
             await Task.Delay(10);
             robot.KeyPress(Key.Enter);
