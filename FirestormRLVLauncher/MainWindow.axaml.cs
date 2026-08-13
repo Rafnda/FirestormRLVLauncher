@@ -723,27 +723,59 @@ namespace FirestormRLVLauncher
                 return false;
             if (_loginData == null)
                 return false;
+            if (Clipboard == null) {
+                AppendStatus("Clipboard is not available.", Color.DarkRed);
+                return false;
+            }
+            string? prevClipboard = await Clipboard.TryGetTextAsync();
             if (!CheckForegroundWindow(firestormWnd))
                 return false;
             Robot robot = new Robot();
-            robot.Type(_loginData._userName);
-            await Task.Delay(60);
+            await TypeAndPaste(robot, _loginData._userName);
+            await Task.Delay(70);
             robot.KeyPress(Key.Tab);
             if (!CheckForegroundWindow(firestormWnd))
                 return false;
-            robot.Type(_loginData.GetPassword());
+            await TypeAndPaste(robot, _loginData.GetPassword());
             await Task.Delay(60);
             robot.KeyPress(Key.Enter);
             await Task.Delay(10);
             robot.KeyPress(Key.Enter);
             AppendStatus("Logging in.");
+            if (prevClipboard != null)
+                await Clipboard.SetTextAsync(prevClipboard);
+            else
+                await Clipboard.ClearAsync();
             await Task.Delay(500);
-            if (!IsLoggedIn(GetForegroundWindow())) {
+            if (!IsLoggedIn(firestormWnd)) {
                 AppendStatus("Login seems to have failed.", Color.DarkRed);
                 return false;
             }
             return true;
         }
+
+        private async Task TypeAndPaste(Robot robot, string text) {
+            foreach (char c in text) {
+                if (char.IsLetterOrDigit(c)) {
+
+                    if (char.IsUpper(c)) {
+                        robot.KeyDown(Key.Shift);
+                        robot.KeyPress(c);
+                        robot.KeyUp(Key.Shift);
+                    }
+                    else {
+                        robot.KeyPress(c);
+                    }
+                }
+                else {
+                    await Clipboard.SetTextAsync(c.ToString());
+                    robot.CombineKeys(Key.Control, Key.V);
+                    await Task.Delay(10);
+                }
+            }
+        }
+
+      
 
         // Append a status message to the bottom ListBox
         public void AppendStatus(string message) {

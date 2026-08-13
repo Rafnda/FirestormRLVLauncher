@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
         x:Class="FirestormRLVLauncher.MainWindow"
-        Title="FirestormRLVLauncher v1.2"
+        Title="FirestormRLVLauncher v1.3"
         Width="600"
         Height="400">
     <Window.Styles>
