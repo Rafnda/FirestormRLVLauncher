@@ -601,6 +601,7 @@ namespace FirestormRLVLauncher
                 return null;
 
             int waitTime = 0;
+            int shouldHaveColorsTime = 3000;
             int previousDifferentColors = 0;
             int unchanged = 0;
             int errors = 0;
@@ -611,10 +612,11 @@ namespace FirestormRLVLauncher
                     hwnd = GetProcessWindow(process);
                     errors++;
                 }
-                else if (differentColors < 10 && waitTime > 2000) {
+                else if (differentColors < 50 && waitTime >= shouldHaveColorsTime) {
                     AppendStatus("Window empty after " + waitTime.ToString() + "ms");
                     hwnd = GetProcessWindow(process);
                     errors++;
+                    shouldHaveColorsTime += 1000;
                 }
                 else if (differentColors != previousDifferentColors) {
                     AppendStatus("Different colors: " + differentColors.ToString() + " at " + waitTime.ToString() + "ms");
@@ -641,8 +643,8 @@ namespace FirestormRLVLauncher
                 System.Drawing.Bitmap bmp = PrintWindow(hwnd);
                 Color lastColor = Color.Green;
                 int differentColors = 0;
-                for (int x = 5; x < bmp.Width - 5; x++) {
-                    Color color = bmp.GetPixel(x, bmp.Height / 3);
+                for (int y = 2; y < bmp.Height - 2; y++) {
+                    Color color = bmp.GetPixel(bmp.Width / 2, y);
                     if (color != lastColor)
                         differentColors++;
                     lastColor = color;
