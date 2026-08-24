@@ -561,8 +561,6 @@ namespace FirestormRLVLauncher
         public IntPtr? GetProcessWindow(Process process) {
             IntPtr found = IntPtr.Zero;
             List<IntPtr> windows = new List<IntPtr>();
-            List<int> widths = new List<int>();
-            List<int> colors = new List<int>();
             int maxColorCount = 0;
 
             EnumWindows(delegate (IntPtr wnd, IntPtr param)
@@ -578,8 +576,6 @@ namespace FirestormRLVLauncher
                             AppendStatus("Window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount);
                             maxColorCount = colorCount;
                             windows.Add(wnd);
-                            widths.Add(rc.Width);
-                            colors.Add(colorCount);
                         }
                         else
                             AppendStatus("Other window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount);
@@ -612,7 +608,7 @@ namespace FirestormRLVLauncher
                     hwnd = GetProcessWindow(process);
                     errors++;
                 }
-                else if (differentColors < 50 && waitTime >= shouldHaveColorsTime) {
+                else if (differentColors <= 50 && waitTime >= shouldHaveColorsTime) {
                     AppendStatus("Window empty after " + waitTime.ToString() + "ms");
                     hwnd = GetProcessWindow(process);
                     errors++;
