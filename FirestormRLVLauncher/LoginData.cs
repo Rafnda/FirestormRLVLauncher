@@ -182,7 +182,7 @@ namespace FirestormRLVLauncher {
                 }
             }
             catch (Exception ex) {
-                _onLoadError?.Invoke("Failed to load login: " + ex.Message + "\nWrong file type or the encryption key changed.", Color.DarkRed);
+                _onLoadError?.Invoke("Failed to load " + Path.GetFileName(_filePath) + ": " + ex.Message + "\n-Wrong file type or the encryption key changed.", Color.DarkRed);
             }
         }
 

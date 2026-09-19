@@ -129,7 +129,7 @@ namespace FirestormRLVLauncher
             }
             catch (Exception ex) {
                 _loginData = null;
-                AppendStatus("Failed to load login: " + ex.Message + "\n  Wrong file type or the encryption key changed.", System.Drawing.Color.DarkRed);
+                AppendStatus("Failed to load " + Path.GetFileName(filePath) + ": " + ex.Message + "\n  Wrong file type or the encryption key changed.", System.Drawing.Color.DarkRed);
             }
             ShowLoginData();
         }
@@ -377,6 +377,7 @@ namespace FirestormRLVLauncher
             }
             //Don't remember password
             SetFirestormSetting(doc, root, keys, "FSRememberUsername", "0");
+            SetFirestormSetting(doc, root, keys, "RememberPassword", "0");
             //No start location selection
             SetFirestormSetting(doc, root, keys, "ShowStartLocation", "0");
             //Enable RLV
@@ -451,6 +452,7 @@ namespace FirestormRLVLauncher
             }
             bool ok = true;
             ok = ok && CheckValue(keys, "FSRememberUsername", "0");
+            ok = ok && CheckValue(keys, "RememberPassword", "0");
             ok = ok && CheckValue(keys, "ShowStartLocation", "0");
             ok = ok && CheckValue(keys, "RestrainedLove", "1");
             ok = ok && CheckValue(keys, "RestrainedLoveCanOOC", "0");
