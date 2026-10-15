@@ -1,0 +1,34 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300"
+        x:Class="FirestormRLVLauncher.AddTimeWindow"
+        Title="Add Time"
+        Width="400" Height="300">
+    <Panel>
+        <StackPanel Margin="12" Spacing="8">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="File: "/>
+                <TextBlock Name="ProfileFileText" Text="New File" Grid.ColumnSpan="2"/>
+            </StackPanel>
+            <TextBlock Text="The Login is locked. You can only increase the unlock time. Doing so will also reduce the time spent by 10 hours." Margin="12" TextWrapping="Wrap"/>
+            <Grid ColumnDefinitions="120, *" RowDefinitions="*,*,*,*" Margin="12" RowSpacing="8">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Currently" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Name="TimeText" Text="Time [h]" VerticalAlignment="Center"/>
+       
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Duration [hours]" VerticalAlignment="Center"/>
+                <NumericUpDown Grid.Row="1" Grid.Column="1" Name="DurationNum" Value="50" Increment="10"
+                        FormatString="0" Minimum="1" ValueChanged="SetPreview"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Preview" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Name="PreviewTimeText" Text="Time [h]" VerticalAlignment="Center"/>
+            </Grid>
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="12" Spacing="8">
+            <Button Name="ApplyButton" Click="ApplyButton_Click" Content="Apply" Width="80"/>
+            <Button Name="CancelButton" Click="CancelButton_Click" Content="Cancel" Width="80"/>
+        </StackPanel>
+    </Panel>
+</Window>

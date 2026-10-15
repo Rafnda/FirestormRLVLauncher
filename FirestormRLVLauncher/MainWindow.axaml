@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
         x:Class="FirestormRLVLauncher.MainWindow"
-        Title="FirestormRLVLauncher v1.5"
+        Title="FirestormRLVLauncher v1.6"
         Width="600"
         Height="400">
     <Window.Styles>
@@ -42,6 +42,7 @@
                                 Content="Login"
                                 Height="50" Width="120"
                                 Background="Orange"
+                                FontWeight="Bold"
                                 VerticalContentAlignment="Center"/>
                     </StackPanel>
                 </Border>

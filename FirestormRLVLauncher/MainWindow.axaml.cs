@@ -229,10 +229,20 @@ namespace FirestormRLVLauncher
         private async void EditButton_Click(object sender, RoutedEventArgs e) {
             if (_loginData == null)
                 return;
-            LoginDetailsWindow profileWindow = new LoginDetailsWindow(_loginData);
-            await profileWindow.ShowDialog(this);
-            //_loginData = profileWindow._login;
-            ShowLoginData();
+            if (_loginData._locked.Value == 0) {
+                LoginDetailsWindow profileWindow = new LoginDetailsWindow(_loginData);
+                await profileWindow.ShowDialog(this);
+                //_loginData = profileWindow._login;
+                ShowLoginData();
+            }
+            else {
+                AddTimeWindow addTimeWindow = new AddTimeWindow(_loginData); 
+                await addTimeWindow.ShowDialog(this);
+                if (addTimeWindow.accepted) {
+                    ShowLoginData();
+                    AppendStatus("Lock time changed to " +  (_loginData._totalMinutes.Value/60).ToString() + " hours");
+                }
+            }
         }
 
         public void ShowLoginData() {
@@ -249,7 +259,8 @@ namespace FirestormRLVLauncher
                 ShowLoginTime();
                 this.LaunchButton.IsEnabled = !_running;
                 this.LockButton.IsEnabled = _loginData._locked.Value == 0;
-                this.EditButton.IsEnabled = _loginData._locked.Value == 0;
+                this.EditButton.IsEnabled = true;
+                this.EditButton.Content = _loginData._locked.Value == 0 ? "Edit" : "Add";
             }
         }
 
@@ -729,6 +740,7 @@ namespace FirestormRLVLauncher
             if (!CheckForegroundWindow(firestormWnd))
                 return false;
             Robot robot = new Robot();
+            robot.KeyPress(Key.Esc);
             await TypeAndPaste(robot, _loginData._userName);
             await Task.Delay(70);
             robot.KeyPress(Key.Tab);
