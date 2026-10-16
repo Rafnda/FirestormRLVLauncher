@@ -4,7 +4,8 @@
         x:Class="FirestormRLVLauncher.LoginDetailsWindow"
         x:DataType="local:LoginDetailsWindow"
         Title="Profile Details"
-        Width="420" Height="280">
+        Width="420" Height="280"
+        WindowStartupLocation="CenterOwner">
     <Panel>
         <StackPanel Margin="12" Spacing="8">
             <StackPanel Orientation="Horizontal" Spacing="8">

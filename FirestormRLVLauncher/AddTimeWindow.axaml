@@ -5,7 +5,8 @@
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300"
         x:Class="FirestormRLVLauncher.AddTimeWindow"
         Title="Add Time"
-        Width="400" Height="300">
+        Width="400" Height="300"
+        WindowStartupLocation="CenterOwner">
     <Panel>
         <StackPanel Margin="12" Spacing="8">
             <StackPanel Orientation="Horizontal" Spacing="8">
