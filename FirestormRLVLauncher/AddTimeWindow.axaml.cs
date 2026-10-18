@@ -103,7 +103,7 @@ public partial class AddTimeWindow : Window
         if (!accepted)
             return;
 
-        _login._elapsedMinutes.Value = _login._elapsedMinutes.Value - 10;
+        _login._elapsedMinutes.Value = _login._elapsedMinutes.Value - 600;
         if (_login._elapsedMinutes.Value < 0)
             _login._elapsedMinutes.Value = 0;
         if (durationNum.Value * 60 > _login._totalMinutes.Value) {
