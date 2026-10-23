@@ -614,7 +614,7 @@ namespace FirestormRLVLauncher
             int previousDifferentColors = 0;
             int unchanged = 0;
             int errors = 0;
-            while (waitTime < 20000 && errors < 5) {
+            while (waitTime < 30000 && errors < 10) {
                 int differentColors = WindowColors(hwnd.Value);
                 if (differentColors == 0) {
                     AppendStatus("Window appears to be closed after " + waitTime.ToString() + "ms");
@@ -625,7 +625,7 @@ namespace FirestormRLVLauncher
                     AppendStatus("Window empty after " + waitTime.ToString() + "ms");
                     hwnd = GetProcessWindow(process);
                     errors++;
-                    shouldHaveColorsTime += 1000;
+                    shouldHaveColorsTime += 2000;
                 }
                 else if (differentColors != previousDifferentColors) {
                     AppendStatus("Different colors: " + differentColors.ToString() + " at " + waitTime.ToString() + "ms");
