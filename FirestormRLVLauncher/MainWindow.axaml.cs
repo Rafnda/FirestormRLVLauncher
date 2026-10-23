@@ -623,6 +623,7 @@ namespace FirestormRLVLauncher
                 }
                 else if (differentColors <= 50 && waitTime >= shouldHaveColorsTime) {
                     AppendStatus("Window empty after " + waitTime.ToString() + "ms");
+                    SaveScreenshot(hwnd.Value, "window_capture_" + waitTime.ToString());
                     hwnd = GetProcessWindow(process);
                     errors++;
                     shouldHaveColorsTime += 2000;
@@ -639,7 +640,6 @@ namespace FirestormRLVLauncher
                         return hwnd;
                     }
                 }
-                //bmp.Save("window_capture_" + waitTime.ToString() + ".png", ImageFormat.Png);
                 await Task.Delay(100);
                 waitTime += 100;
             }
@@ -663,6 +663,16 @@ namespace FirestormRLVLauncher
             catch (Exception) {
                 AppendStatus("Failed to capture screen", Color.DarkRed);
                 return 0;
+            }
+        }
+
+        public void SaveScreenshot(IntPtr hwnd, string fileName) {
+            try {
+                System.Drawing.Bitmap bmp = PrintWindow(hwnd);
+                bmp.Save(fileName + ".png", ImageFormat.Png);
+            }
+            catch (Exception) {
+                AppendStatus("Failed to capture screen", Color.DarkRed);
             }
         }
 
