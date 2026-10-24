@@ -98,7 +98,8 @@ namespace FirestormRLVLauncher {
             _key.Value = Encoding.Unicode.GetBytes("^e&g~_]02;cg^uYl6*b6t&gjB]^A;,W124.123");
             _exeHash = new ObfuscatedByteArray(32);
             SHA256 sha = SHA256.Create();
-            _exeHash.Value = sha.ComputeHash(File.ReadAllBytes(Settings._firestormExe));
+            if (File.Exists(Settings._firestormExe))
+                _exeHash.Value = sha.ComputeHash(File.ReadAllBytes(Settings._firestormExe));
         }
 
         public LoginData(string filePath, string userName, string password)
@@ -114,6 +115,15 @@ namespace FirestormRLVLauncher {
             InitializeValues();
             _filePath = filePath;
             LoadLogin();
+        }
+
+        public bool UpdateExeHash() {
+            if (_locked.Value != 0)
+                return false;
+            SHA256 sha = SHA256.Create();
+            if (File.Exists(Settings._firestormExe))
+                _exeHash.Value = sha.ComputeHash(File.ReadAllBytes(Settings._firestormExe));
+            return true;
         }
 
 

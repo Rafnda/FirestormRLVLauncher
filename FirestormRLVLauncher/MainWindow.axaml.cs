@@ -499,11 +499,25 @@ namespace FirestormRLVLauncher
         static extern bool IsWindow(IntPtr hWnd);
 
         public async Task<Process?> LaunchProc() {
+            if (!File.Exists(Settings._firestormExe)) {
+                AppendStatus("Firestorm executable not found: " + Settings._firestormExe, Color.DarkRed);
+                return null;
+            }
+            if (_loginData == null) {
+                AppendStatus("No login data loaded", Color.DarkRed);
+                return null;
+            }
             SHA256 sha = SHA256.Create();
             byte[] exeHash = sha.ComputeHash(File.ReadAllBytes(Settings._firestormExe));
-            if (_loginData == null || !exeHash.SequenceEqual(_loginData._exeHash.Value)) {
-                AppendStatus("Invalid Firestorm executable. Please use the same version as on creation of the login file.", Color.DarkRed);
-                return null; 
+            if (!exeHash.SequenceEqual(_loginData._exeHash.Value)) {
+                if (_loginData._locked.Value == 0) {
+                    _loginData.UpdateExeHash();
+                    AppendStatus("Updated Firestorm executable for this login.");
+                }
+                else {
+                    AppendStatus("Invalid Firestorm executable. Please use the same version as on creation of the login file.", Color.DarkRed);
+                    return null;
+                }
             }
             Process? proc = null;
             try
