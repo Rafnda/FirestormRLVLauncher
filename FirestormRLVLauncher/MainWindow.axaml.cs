@@ -34,7 +34,7 @@ namespace FirestormRLVLauncher
     public partial class MainWindow : Window
     {
         private ObservableCollection<StatusMessage> _statusMessages;
-
+        
         public string _firestormSettings;
         public LoginData? _loginData;
         public bool _running = false;
@@ -163,6 +163,8 @@ namespace FirestormRLVLauncher
                 Settings._firestormExe = files[0].Path.LocalPath;
                 this.FirestormExeText.Text = Settings._firestormExe;
                 Settings.SaveSettings();
+                if (_loginData != null && _loginData._locked.Value == 0)
+                    _loginData.UpdateExeHash();
             }
         }
 
@@ -809,11 +811,14 @@ namespace FirestormRLVLauncher
             }
         }
 
-      
 
         // Append a status message to the bottom ListBox
         public void AppendStatus(string message) {
-            AppendStatus(message, Color.Black);
+            Color color = Color.Black;
+            Avalonia.Media.SolidColorBrush s = this.CurrentFile.Foreground as Avalonia.Media.SolidColorBrush;
+            if (s != null && s.Color.R > 200)
+                color = Color.White;
+            AppendStatus(message, color);
         }
         public void AppendStatus(string message, Color severity) {
             var text = $"[{DateTime.Now:HH:mm:ss}] {message}";
