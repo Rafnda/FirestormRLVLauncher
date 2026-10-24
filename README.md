@@ -32,5 +32,5 @@ Again, use at your own risk.
 I won't and probably can't help you recover an account if something goes wrong, as that would defeat the purpose.
 
 ## Build instructions
-Built with Visual Studio 2022. (VS 2026 can also be used)  
+Built with Visual Studio 2022. (VS 2026 can also be used.)  
 Dependencies: Avalonia UI - needs a (free) account
