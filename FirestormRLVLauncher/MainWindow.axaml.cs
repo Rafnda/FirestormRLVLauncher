@@ -301,8 +301,10 @@ namespace FirestormRLVLauncher
                 goto Fail;
 
             bool success = await Login(wnd.Value);
-            if (!success)
+            if (!success) {
+                process.Kill(); // As password may be leaked on timeout without
                 goto Fail;
+            }
 
             _ = MonitorProcessAsync(process);
             AppendStatus("Keep this application running to have the time count.");
@@ -726,20 +728,22 @@ namespace FirestormRLVLauncher
                 return false;
             }
 
-            if (IsLoggedIn(wnd)) {
+            if (IsLoggedIn(wnd) != 0) {
                 AppendStatus("Already logged in!", Color.DarkRed);
                 return false;
             }
             return true;
         }
 
-        public bool IsLoggedIn(IntPtr wnd) {
+        public int IsLoggedIn(IntPtr wnd) {
             StringBuilder sb = new StringBuilder(100);
             GetWindowText(wnd, sb, sb.Capacity);
-            if (sb.ToString().Contains(" - ")) {
-                return true;
+            if (sb.ToString().EndsWith("resident"))
+                return 1;
+            else if (sb.ToString().Contains(" - ")) {
+                return 2;
             }
-            return false;
+            return 0;
         }
 
 
@@ -783,11 +787,21 @@ namespace FirestormRLVLauncher
             else
                 await Clipboard.ClearAsync();
             await Task.Delay(500);
-            if (!IsLoggedIn(firestormWnd)) {
-                AppendStatus("Login seems to have failed.", Color.DarkRed);
+            if (IsLoggedIn(firestormWnd) == 0) {
+                AppendStatus("Login input seems to have failed.", Color.DarkRed);
                 return false;
             }
-            return true;
+            i = 0;
+            while (i < 1200) {
+                if (IsLoggedIn(firestormWnd) == 2) {
+                    AppendStatus("Logged in successfully.");
+                    return true;
+                }
+                await Task.Delay(100);
+                i++;
+            }
+            AppendStatus("Login seems to have timed out due to SL servers.", Color.DarkRed);
+            return false;
         }
 
         private async Task TypeAndPaste(Robot robot, string text) {
