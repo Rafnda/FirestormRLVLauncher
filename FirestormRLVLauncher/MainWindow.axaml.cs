@@ -741,6 +741,11 @@ namespace FirestormRLVLauncher
             if (sb.ToString().EndsWith("resident"))
                 return 1;
             else if (sb.ToString().Contains(" - ")) {
+                if (char.IsUpper(_loginData._userName[0])) {
+                    if (char.IsLower(sb.ToString().Split(" - ")[1][0])) {
+                        return 1;
+                    }
+                }
                 return 2;
             }
             return 0;
