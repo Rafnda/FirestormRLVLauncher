@@ -776,6 +776,7 @@ namespace FirestormRLVLauncher
                 return false;
             Robot robot = new Robot();
             robot.KeyPress(Key.Esc);
+            await Task.Delay(10);
             await TypeAndPaste(robot, _loginData._userName);
             await Task.Delay(70);
             robot.KeyPress(Key.Tab);
@@ -798,9 +799,14 @@ namespace FirestormRLVLauncher
             }
             i = 0;
             while (i < 1200) {
-                if (IsLoggedIn(firestormWnd) == 2) {
+                int loggedIn = IsLoggedIn(firestormWnd);
+                if (loggedIn == 2) {
                     AppendStatus("Logged in successfully.");
                     return true;
+                }
+                else if (loggedIn == 0) { //User closed window for example
+                    AppendStatus("Login failed prematurely.", Color.DarkRed);
+                    return false;
                 }
                 await Task.Delay(100);
                 i++;
