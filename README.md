@@ -5,7 +5,7 @@ It launches Firestorm and automatically adjusts settings and logs into SL. The p
 
 **Warning**: Use at your own risk. Bugs happen. Make sure it works with your environment first and ALWAYS have a second place to store your password.
 
-You can download it under "Releases" on the right side of this page, or build it yourself. You may also need to get the .NET 8 runtime if you don't have it already. Windows will send you to the right place in that case.
+You can download it under "Releases" on the right side of this page. (Then unzip it wherever and open the EXE.) Or build it yourself. You may also need to get the .NET 8 runtime if you don't have it already. Windows will send you to the right place in that case.
 
 <img width="602" height="432" alt="screen" src="https://github.com/user-attachments/assets/4f5a5fe2-f902-424a-82e5-f04a80179737" />
 
@@ -20,6 +20,11 @@ You can download it under "Releases" on the right side of this page, or build it
 * When you are sure everything is set up correctly and it still works after a restart, click the Lock button in the launcher
 * (In Firestorm on the login window, delete the saved login for that account with the trash bin button)
 * (Delete any other copies of the new password)
+
+## Known issues
+For some people logging in with this tool fails after some time with the message "Failed to find the Firestorm window". This is because something on their system prevents the tool from taking a screenshot of the Firestorm window. I have been unable to reproduce or fix this issue. If this is the case for you then  
+A) Try to experiment a bit - turn on/off things and see if it helps. (That's what I'd be doing if I could reproduce it.) If you manage to make it work please let me know, that would be a great service for everyone.  
+B) Stay tuned, I have an idea how to make it work without screenshots
 
 ## Additional Precautions
 If you use longer timers, consider these precautions:
