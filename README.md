@@ -5,7 +5,7 @@ It launches Firestorm and automatically adjusts settings and logs into SL. The p
 
 **Warning**: Use at your own risk. Bugs happen. Make sure it works with your environment first and ALWAYS have a second place to store your password.
 
-You can download it under "Releases" on the right side of this page, or build it yourself. You may also need to get the .NET 8 runtime if you don't have it already. Windows will send you to the right place in that case.
+You can download it under "Releases" on the right side of this page. (Then unzip it wherever and open the EXE). Or build it yourself. You may also need to get the .NET 8 runtime if you don't have it already. Windows will send you to the right place in that case.
 
 <img width="602" height="432" alt="screen" src="https://github.com/user-attachments/assets/4f5a5fe2-f902-424a-82e5-f04a80179737" />
 
