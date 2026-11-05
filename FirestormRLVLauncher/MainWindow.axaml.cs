@@ -637,14 +637,14 @@ namespace FirestormRLVLauncher
             while (waitTime < 30000 && errors < 10) {
                 int differentColors = WindowColors(hwnd.Value);
                 if (differentColors == 0) {
-                    AppendStatus("Window appears to be closed after " + waitTime.ToString() + "ms");
+                    AppendStatus("Window appears to be closed after " + waitTime.ToString() + "ms", true);
                     hwnd = GetProcessWindow(process);
                     errors++;
                 }
                 else if (differentColors <= 50 && waitTime >= shouldHaveColorsTime) {
                     StringBuilder sb = new StringBuilder(100);
                     GetWindowText(hwnd.Value, sb, sb.Capacity);
-                    AppendStatus("Window empty after " + waitTime.ToString() + "ms, colors: " + differentColors.ToString(), true);
+                    AppendStatus("Window empty after " + waitTime.ToString() + "ms, colors: " + differentColors.ToString(), waitTime > 10000);
                     SaveScreenshot(hwnd.Value, "window_capture_" + waitTime.ToString());
                     hwnd = GetProcessWindow(process);
                     errors++;
