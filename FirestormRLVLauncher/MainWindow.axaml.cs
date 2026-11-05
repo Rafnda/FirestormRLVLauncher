@@ -123,13 +123,13 @@ namespace FirestormRLVLauncher
                 Settings._lastLoginFile = filePath;
                 Settings.SaveSettings();
                 if (loginData._userName == string.Empty)
-                    AppendStatus(Path.GetFileName(filePath) + " incomplete\n  This probably means the encryption key changed.", System.Drawing.Color.DarkRed);
+                    AppendStatus(Path.GetFileName(filePath) + " incomplete\n  This probably means the encryption key changed.", true);
                 else
                     AppendStatus("Loaded login from " + Path.GetFileName(filePath));
             }
             catch (Exception ex) {
                 _loginData = null;
-                AppendStatus("Failed to load " + Path.GetFileName(filePath) + ": " + ex.Message + "\n  Wrong file type or the encryption key changed.", System.Drawing.Color.DarkRed);
+                AppendStatus("Failed to load " + Path.GetFileName(filePath) + ": " + ex.Message + "\n  Wrong file type or the encryption key changed.", true);
             }
             ShowLoginData();
         }
@@ -369,7 +369,7 @@ namespace FirestormRLVLauncher
             if (CheckFirestormSettings())
                 return true;
             if (!File.Exists(_firestormSettings)) {
-                AppendStatus("Settings file not found: " + _firestormSettings, Color.DarkRed);
+                AppendStatus("Settings file not found: " + _firestormSettings, true);
                 return false;
             }
             AppendStatus("User settings path: " + _firestormSettings);
@@ -377,17 +377,17 @@ namespace FirestormRLVLauncher
             doc.Load(_firestormSettings);
             XmlNode? root = doc.DocumentElement;
             if (root == null) {
-                AppendStatus("Failed to load root", Color.DarkRed);
+                AppendStatus("Failed to load root", true);
                 return false;
             }
             root = root.SelectSingleNode("map");
             if (root == null) {
-                AppendStatus("Failed to load map", Color.DarkRed);
+                AppendStatus("Failed to load map", true);
                 return false;
             }
             XmlNodeList? keys = root.SelectNodes("key");
             if (keys == null) {
-                AppendStatus("Failed to load keys", Color.DarkRed);
+                AppendStatus("Failed to load keys", true);
                 return false;
             }
             //Don't remember password
@@ -405,7 +405,7 @@ namespace FirestormRLVLauncher
                 AppendStatus("Modified Firestorm settings.xml");
             }
             catch (Exception ex) {
-                AppendStatus("Failed to save settings.xml: " + ex.Message, Color.DarkRed);
+                AppendStatus("Failed to save settings.xml: " + ex.Message, true);
                 return false;
             }
 
@@ -445,24 +445,24 @@ namespace FirestormRLVLauncher
 
         public bool CheckFirestormSettings() {
             if (!File.Exists(this._firestormSettings)) {
-                AppendStatus("Settings file not found: " + _firestormSettings, Color.DarkRed);
+                AppendStatus("Settings file not found: " + _firestormSettings, true);
                 return false;
             }
             XmlDocument doc = new XmlDocument();
             doc.Load(_firestormSettings);
             XmlNode? root = doc.DocumentElement;
             if (root == null) {
-                AppendStatus("Failed to load root", Color.DarkRed);
+                AppendStatus("Failed to load root", true);
                 return false;
             }
             root = root.SelectSingleNode("map");
             if (root == null) {
-                AppendStatus("Failed to load map", Color.DarkRed);
+                AppendStatus("Failed to load map", true);
                 return false;
             }
             XmlNodeList? keys = root.SelectNodes("key");
             if (keys == null) {
-                AppendStatus("Failed to load keys", Color.DarkRed);
+                AppendStatus("Failed to load keys", true);
                 return false;
             }
             bool ok = true;
@@ -493,7 +493,7 @@ namespace FirestormRLVLauncher
                     break;
                 }
             }
-            AppendStatus("Firestorm setting " + keyName + " is not set to " + expectedValue, Color.DarkRed);
+            AppendStatus("Firestorm setting " + keyName + " is not set to " + expectedValue, true);
             return false;
         }
 
@@ -504,11 +504,11 @@ namespace FirestormRLVLauncher
 
         public async Task<Process?> LaunchProc() {
             if (!File.Exists(Settings._firestormExe)) {
-                AppendStatus("Firestorm executable not found: " + Settings._firestormExe, Color.DarkRed);
+                AppendStatus("Firestorm executable not found: " + Settings._firestormExe, true);
                 return null;
             }
             if (_loginData == null) {
-                AppendStatus("No login data loaded", Color.DarkRed);
+                AppendStatus("No login data loaded", true);
                 return null;
             }
             SHA256 sha = SHA256.Create();
@@ -519,7 +519,7 @@ namespace FirestormRLVLauncher
                     AppendStatus("Updated Firestorm executable for this login.");
                 }
                 else {
-                    AppendStatus("Invalid Firestorm executable. Please use the same version as on creation of the login file.", Color.DarkRed);
+                    AppendStatus("Invalid Firestorm executable. Please use the same version as on creation of the login file.", true);
                     return null;
                 }
             }
@@ -537,11 +537,11 @@ namespace FirestormRLVLauncher
                     
                 }
                 else
-                    AppendStatus("Process failed to start.", Color.DarkRed);
+                    AppendStatus("Process failed to start.", true);
             }
             catch (System.Exception)
             {
-                AppendStatus("Launch failed", Color.DarkRed);
+                AppendStatus("Launch failed", true);
             }
 
             if (proc != null) {
@@ -661,7 +661,7 @@ namespace FirestormRLVLauncher
                 await Task.Delay(100);
                 waitTime += 100;
             }
-            AppendStatus("Failed to find the Firestorm window", Color.DarkRed);
+            AppendStatus("Failed to find the Firestorm window", true);
             return null;
         }
 
@@ -679,7 +679,7 @@ namespace FirestormRLVLauncher
                 return differentColors;
             }
             catch (Exception) {
-                AppendStatus("Failed to capture screen", Color.DarkRed);
+                AppendStatus("Failed to capture screen", true);
                 return 0;
             }
         }
@@ -690,7 +690,7 @@ namespace FirestormRLVLauncher
                 bmp.Save(fileName + ".png", ImageFormat.Png);
             }
             catch (Exception) {
-                AppendStatus("Failed to capture screen", Color.DarkRed);
+                AppendStatus("Failed to capture screen", true);
             }
         }
 
@@ -724,12 +724,12 @@ namespace FirestormRLVLauncher
             IntPtr wnd = GetForegroundWindow();
             //Check process ID
             if (wnd != targetWnd) {
-                AppendStatus("Foreground window is not correct - keep the Firestorm window selected while starting!", Color.DarkRed);
+                AppendStatus("Foreground window is not correct - keep the Firestorm window selected while starting!", true);
                 return false;
             }
 
             if (IsLoggedIn(wnd) != 0) {
-                AppendStatus("Already logged in!", Color.DarkRed);
+                AppendStatus("Already logged in!", true);
                 return false;
             }
             return true;
@@ -768,7 +768,7 @@ namespace FirestormRLVLauncher
             if (_loginData == null)
                 return false;
             if (Clipboard == null) {
-                AppendStatus("Clipboard is not available.", Color.DarkRed);
+                AppendStatus("Clipboard is not available.", true);
                 return false;
             }
             string? prevClipboard = await Clipboard.TryGetTextAsync();
@@ -794,7 +794,7 @@ namespace FirestormRLVLauncher
                 await Clipboard.ClearAsync();
             await Task.Delay(500);
             if (IsLoggedIn(firestormWnd) == 0) {
-                AppendStatus("Login input seems to have failed.", Color.DarkRed);
+                AppendStatus("Login input seems to have failed.", true);
                 return false;
             }
             i = 0;
@@ -805,13 +805,13 @@ namespace FirestormRLVLauncher
                     return true;
                 }
                 else if (loggedIn == 0) { //User closed window for example
-                    AppendStatus("Login failed prematurely.", Color.DarkRed);
+                    AppendStatus("Login failed prematurely.", true);
                     return false;
                 }
                 await Task.Delay(100);
                 i++;
             }
-            AppendStatus("Login seems to have timed out due to SL servers.", Color.DarkRed);
+            AppendStatus("Login seems to have timed out due to SL servers.", true);
             return false;
         }
 
@@ -837,19 +837,18 @@ namespace FirestormRLVLauncher
         }
 
 
-        // Append a status message to the bottom ListBox
-        public void AppendStatus(string message) {
-            Color color = Color.Black;
+        public void AppendStatus(string message, bool error = false) {
+            string color;
             Avalonia.Media.SolidColorBrush s = this.CurrentFile.Foreground as Avalonia.Media.SolidColorBrush;
-            if (s != null && s.Color.R > 200)
-                color = Color.White;
-            AppendStatus(message, color);
-        }
-        public void AppendStatus(string message, Color severity) {
+            if (s != null && s.Color.R > 200) // Dark mode
+                color = error ? "Red" : "White";
+            else // Bright mode
+                color = error ? "DarkRed" : "Black";
+
             var text = $"[{DateTime.Now:HH:mm:ss}] {message}";
             Dispatcher.UIThread.Post(() =>
             {
-                StatusMessage status = new StatusMessage { Message = text, Color = severity.Name };
+                StatusMessage status = new StatusMessage { Message = text, Color = color };
                 _statusMessages.Add(status);
                 this.StatusList.ScrollIntoView(status);
             });

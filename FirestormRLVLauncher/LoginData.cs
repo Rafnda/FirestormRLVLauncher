@@ -80,7 +80,7 @@ namespace FirestormRLVLauncher {
         public ObfuscatedByteArray _exeHash;
         public ObfuscatedInt _locked;
         private ObfuscatedByteArray _key;
-        public Action<string, Color>? _onLoadError;
+        public Action<string, bool>? _onLoadError;
         public string GetPassword() {
             return Decrypt(_encryptedPassword);
         }
@@ -192,7 +192,7 @@ namespace FirestormRLVLauncher {
                 }
             }
             catch (Exception ex) {
-                _onLoadError?.Invoke("Failed to load " + Path.GetFileName(_filePath) + ": " + ex.Message + "\n-Wrong file type or the encryption key changed.", Color.DarkRed);
+                _onLoadError?.Invoke("Failed to load " + Path.GetFileName(_filePath) + ": " + ex.Message + "\n-Wrong file type or the encryption key changed.", true);
             }
         }
 
