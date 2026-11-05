@@ -14,8 +14,8 @@ You can download it under "Releases" on the right side of this page, or build it
 * (Change the password of your account and associated eMail to the same long/complicated password and keep it in a text editor until done)
 * (Save the password to https://app.thetimecapsule.org to set a release date)
 * Select your Firestorm executable. Probably C:\Program Files\Firestorm-Releasex64\Firestorm-Releasex64.exe  
-   Note: This file *has to stay unchanged*. Updates to Firestorm will make the launcher refuse to login.
-* Create a new Login file with the SL user name and password. Select the duration it will stay locked. This is online time logged into the game.
+   Note: This file *has to stay unchanged* while locked. Updates to Firestorm will make the launcher refuse to login.
+* Create a new Login file with the SL user name and password. Select the duration it will stay locked. This is online time logged into SecondLife.
 * Test the launcher by clicking the Login button. It should launch Firestorm and log into the game on its own.
 * When you are sure everything is set up correctly and it still works after a restart, click the Lock button in the launcher
 * (In Firestorm on the login window, delete the saved login for that account with the trash bin button)
