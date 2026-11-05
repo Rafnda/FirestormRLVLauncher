@@ -640,7 +640,10 @@ namespace FirestormRLVLauncher
                     errors++;
                 }
                 else if (differentColors <= 50 && waitTime >= shouldHaveColorsTime) {
-                    AppendStatus("Window empty after " + waitTime.ToString() + "ms");
+                    StringBuilder sb = new StringBuilder(100);
+                    GetWindowText(hwnd.Value, sb, sb.Capacity);
+                    AppendStatus("Colors: " + differentColors.ToString() + " Title: \"" + sb.ToString() + "\"");
+                    AppendStatus("Window empty after " + waitTime.ToString() + "ms", true);
                     SaveScreenshot(hwnd.Value, "window_capture_" + waitTime.ToString());
                     hwnd = GetProcessWindow(process);
                     errors++;
