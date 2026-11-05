@@ -605,7 +605,7 @@ namespace FirestormRLVLauncher
                     GetWindowRect(wnd, out rc);
                     if (rc.Width >= 100) {
                         int colorCount = WindowColors(wnd);
-                        if (colorCount > maxColorCount) {
+                        if (sb.ToString().StartsWith("Firestorm")) {
                             AppendStatus("Window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount + " title: \"" + sb.ToString() + "\"");
                             maxColorCount = colorCount;
                             windows.Add(wnd);
@@ -644,8 +644,7 @@ namespace FirestormRLVLauncher
                 else if (differentColors <= 50 && waitTime >= shouldHaveColorsTime) {
                     StringBuilder sb = new StringBuilder(100);
                     GetWindowText(hwnd.Value, sb, sb.Capacity);
-                    AppendStatus("Colors: " + differentColors.ToString() + " Title: \"" + sb.ToString() + "\"");
-                    AppendStatus("Window empty after " + waitTime.ToString() + "ms", true);
+                    AppendStatus("Window empty after " + waitTime.ToString() + "ms, colors: " + differentColors.ToString(), true);
                     SaveScreenshot(hwnd.Value, "window_capture_" + waitTime.ToString());
                     hwnd = GetProcessWindow(process);
                     errors++;
@@ -665,6 +664,14 @@ namespace FirestormRLVLauncher
                 }
                 await Task.Delay(100);
                 waitTime += 100;
+            }
+            if (hwnd != null) {
+                StringBuilder sb = new StringBuilder(100);
+                GetWindowText(hwnd.Value, sb, sb.Capacity);
+                if (sb.ToString().StartsWith("Firestorm")) {
+                    AppendStatus("Window still doesn't look right, but titled right: " + sb.ToString(), true);
+                    return hwnd;
+                }
             }
             AppendStatus("Failed to find the Firestorm window", true);
             return null;
@@ -761,6 +768,7 @@ namespace FirestormRLVLauncher
 
         [DllImport("user32.dll")]
         static extern bool SetForegroundWindow(IntPtr hWnd);
+
         [DllImport("USER32.dll")]
         static extern short GetKeyState(int key);
 
