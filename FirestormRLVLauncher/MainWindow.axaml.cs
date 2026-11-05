@@ -681,8 +681,8 @@ namespace FirestormRLVLauncher
                 }
                 return differentColors;
             }
-            catch (Exception) {
-                AppendStatus("Failed to capture screen", true);
+            catch (Exception ex) {
+                AppendStatus("Failed to capture screen: " + ex.Message, true);
                 return 0;
             }
         }
@@ -692,8 +692,8 @@ namespace FirestormRLVLauncher
                 System.Drawing.Bitmap bmp = PrintWindow(hwnd);
                 bmp.Save(fileName + ".png", ImageFormat.Png);
             }
-            catch (Exception) {
-                AppendStatus("Failed to capture screen", true);
+            catch (Exception ex) {
+                AppendStatus("Failed to save screen: " + ex.Message, true);
             }
         }
 
@@ -710,7 +710,9 @@ namespace FirestormRLVLauncher
             Graphics gfxBmp = Graphics.FromImage(bmp);
             IntPtr hdcBitmap = gfxBmp.GetHdc();
 
-            PrintWindow(hwnd, hdcBitmap, 0);
+            bool success = PrintWindow(hwnd, hdcBitmap, 0);
+            if (!success)
+                throw new Exception("PrintWindow failed");
 
             gfxBmp.ReleaseHdc(hdcBitmap);
             gfxBmp.Dispose();
