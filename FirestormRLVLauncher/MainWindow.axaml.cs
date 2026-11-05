@@ -761,6 +761,8 @@ namespace FirestormRLVLauncher
 
         [DllImport("user32.dll")]
         static extern bool SetForegroundWindow(IntPtr hWnd);
+        [DllImport("USER32.dll")]
+        static extern short GetKeyState(int key);
 
         public async Task<bool> Login(IntPtr firestormWnd) {
             int i = 0;
@@ -782,8 +784,16 @@ namespace FirestormRLVLauncher
             if (!CheckForegroundWindow(firestormWnd))
                 return false;
             Robot robot = new Robot();
+            //Handle capslock
+            if ((GetKeyState(0x14) & 0x0001) != 0) {
+                robot.KeyPress(Key.CapsLock);
+                await Task.Delay(10);
+            }
+
+            // Close possible dropdown menu
             robot.KeyPress(Key.Esc);
             await Task.Delay(10);
+
             await TypeAndPaste(robot, _loginData._userName);
             await Task.Delay(70);
             robot.KeyPress(Key.Tab);
