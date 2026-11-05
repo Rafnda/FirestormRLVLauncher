@@ -599,17 +599,19 @@ namespace FirestormRLVLauncher
                 uint wndProcessId;
                 GetWindowThreadProcessId(wnd, out wndProcessId);
                 if (wndProcessId == process.Id) {
+                    StringBuilder sb = new StringBuilder(100);
+                    GetWindowText(wnd, sb, sb.Capacity);
                     RECT rc;
                     GetWindowRect(wnd, out rc);
                     if (rc.Width >= 100) {
                         int colorCount = WindowColors(wnd);
                         if (colorCount > maxColorCount) {
-                            AppendStatus("Window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount);
+                            AppendStatus("Window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount + " title: \"" + sb.ToString() + "\"");
                             maxColorCount = colorCount;
                             windows.Add(wnd);
                         }
                         else
-                            AppendStatus("Other window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount);
+                            AppendStatus("Other window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount + " title: \"" + sb.ToString() + "\"");
                     }
                 }
                 return true; //return true here so that we iterate all windows
