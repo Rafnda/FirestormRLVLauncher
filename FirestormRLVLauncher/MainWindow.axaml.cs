@@ -560,7 +560,7 @@ namespace FirestormRLVLauncher
 
                 //Wait for the loading floater to close
                 waitTime = 0;
-                while (waitTime < 20000)
+                while (true)
                 {
                     if (!IsWindow(proc.MainWindowHandle))
                     {
@@ -569,6 +569,10 @@ namespace FirestormRLVLauncher
                     }
                     await Task.Delay(100);
                     waitTime += 100;
+                    if (waitTime > 40000) {
+                        AppendStatus("Loading floater still open after 40s.", true);
+                        break;
+                    }
                 }
                 if (!CheckFirestormSettings()) {
                     File.Copy(_firestormSettings, _firestormSettings + ".bak", true);
@@ -601,17 +605,18 @@ namespace FirestormRLVLauncher
                 if (wndProcessId == process.Id) {
                     StringBuilder sb = new StringBuilder(100);
                     GetWindowText(wnd, sb, sb.Capacity);
+                    string title = sb.ToString();
                     RECT rc;
                     GetWindowRect(wnd, out rc);
                     if (rc.Width >= 100) {
                         int colorCount = WindowColors(wnd);
-                        if (sb.ToString().StartsWith("Firestorm")) {
-                            AppendStatus("Window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount + " title: \"" + sb.ToString() + "\"");
+                        if (title.StartsWith("Firestorm") && title.Length > 10) {
+                            AppendStatus("Window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount + " title: \"" + title + "\"");
                             maxColorCount = colorCount;
                             windows.Add(wnd);
                         }
                         else
-                            AppendStatus("Other window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount + " title: \"" + sb.ToString() + "\"");
+                            AppendStatus("Other window " + wnd.ToString() + " for process " + process.Id.ToString() + " width: " + rc.Width + " colors " + colorCount + " title: \"" + title + "\"");
                     }
                 }
                 return true; //return true here so that we iterate all windows
