@@ -22,9 +22,10 @@ You can download it under "Releases" on the right side of this page. (Then unzip
 * (Delete any other copies of the new password)
 
 ## Known issues
-For some people logging in with this tool fails after some time with the message "Failed to find the Firestorm window". This is because something on their system prevents the tool from taking a screenshot of the Firestorm window. I have been unable to reproduce or fix this issue. If this is the case for you then  
-A) Try to experiment a bit - turn on/off things and see if it helps. (That's what I'd be doing if I could reproduce it.) If you manage to make it work please let me know, that would be a great service for everyone.  
-B) Stay tuned, I have an idea how to make it work without screenshots
+For some people logging in with this tool fails after some time with the message "Failed to find the Firestorm window". This is because something on their system prevents the tool from taking a screenshot of the Firestorm window. I have been unable to reproduce or fix this issue. If this is the case for you then:  
+A) Setting up the monitor in the graphics card settings correctly may fix it.  
+B) Try to experiment a bit - turn on/off things and see if it helps. (That's what I'd be doing if I could reproduce it.) If you manage to make it work please let me know, that would be a great service for everyone.  
+C) I changed it now to try and continue even without being able to take screenshots. You should see the message "Window still doesn't look right, but titled right: Firestorm-version". So it should work, but will take longer to log in.
 
 ## Additional Precautions
 If you use longer timers, consider these precautions:
