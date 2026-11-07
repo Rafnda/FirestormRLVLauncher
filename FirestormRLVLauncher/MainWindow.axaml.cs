@@ -639,7 +639,7 @@ namespace FirestormRLVLauncher
             int previousDifferentColors = 0;
             int unchanged = 0;
             int errors = 0;
-            while (waitTime < 30000 && errors < 10) {
+            while (waitTime < 20000 && errors < 7) {
                 int differentColors = WindowColors(hwnd.Value);
                 if (differentColors == 0) {
                     AppendStatus("Window appears to be closed after " + waitTime.ToString() + "ms", true);
